@@ -149,27 +149,37 @@
 	
 
 		$(function(){
+				
+			
+			setTimeout(function(){createPieChart();createDynamicChart();},300);
+			
+			
+		$('#g1').click(createPieChart);
+			
+		function createPieChart()
+		{
+			var primaryContentWidth = $(".content-primary").width();
+			var chartWidth =  primaryContentWidth-10;
 			new Highcharts.Chart({ chart: { renderTo: 'container', plotBackgroundColor: null,
-	        plotBorderWidth: null, plotShadow: false }, title: { text: 'Browser market shares at a specific website, 2010' },
-	        tooltip: { formatter: function() { return '<b>'+ this.point.name +'</b>: '+ this.y +' %'; } }, plotOptions: {
-	        pie: { allowPointSelect: true, cursor: 'pointer', dataLabels: { enabled: false }, showInLegend: true } }, series:
-	        [{ type: 'pie', name: 'Browser share', data: [ ['Firefox', 45.0], ['IE', 26.8], { name: 'Chrome', y: 12.8,
-	        sliced: true, selected: true }, ['Safari', 8.5], ['Opera', 6.2], ['Others', 0.7] ] }] });
-			
-			
-			
-		$('#g1').click(function() { new Highcharts.Chart({ chart: { renderTo: 'container', plotBackgroundColor: null,
-        plotBorderWidth: null, plotShadow: false }, title: { text: 'Browser market shares at a specific website, 2010' },
+        plotBorderWidth: null, plotShadow: false ,width:chartWidth}, title: { text: 'Browser market shares at a specific website, 2010' },
         tooltip: { formatter: function() { return '<b>'+ this.point.name +'</b>: '+ this.y +' %'; } }, plotOptions: {
         pie: { allowPointSelect: true, cursor: 'pointer', dataLabels: { enabled: false }, showInLegend: true } }, series:
         [{ type: 'pie', name: 'Browser share', data: [ ['Firefox', 45.0], ['IE', 26.8], { name: 'Chrome', y: 12.8,
-        sliced: true, selected: true }, ['Safari', 8.5], ['Opera', 6.2], ['Others', 0.7] ] }] }); }); 
+        sliced: true, selected: true }, ['Safari', 8.5], ['Opera', 6.2], ['Others', 0.7] ] }] }); 
+			
+		}
+			
+			
 
 		$('#g2').click(function() {
+			var primaryContentWidth = $(".content-primary").width();
+			var chartWidth =  primaryContentWidth - 10;
+			
 			new Highcharts.Chart({
 				chart: {
 					renderTo: 'container1',
-					type: 'spline'
+					type: 'spline',
+					width: chartWidth
 				},
 				title: {
 					text: 'Snow depth in the Vikjafjellet mountain, Norway'
@@ -281,10 +291,13 @@
 
 
 		$('#g3').click(function() {
+			var primaryContentWidth = $(".content-primary").width();
+			var chartWidth =  primaryContentWidth - 10;
 			new Highcharts.Chart({
 				chart: {
 					renderTo: 'container2',
-					defaultSeriesType: 'bar'
+					defaultSeriesType: 'bar',
+					width:chartWidth
 				},
 				title: {
 					text: 'Historic World Population by Region'
@@ -347,10 +360,13 @@
 			
 		});
 		$('#g4').click(function() {
+			var primaryContentWidth = $(".content-primary").width();
+			var chartWidth =  primaryContentWidth - 10;
 			new Highcharts.Chart({
 				chart: {
 					renderTo: 'container3',
-					zoomType: 'xy'
+					zoomType: 'xy',
+					width:chartWidth
 				},
 				title: {
 					text: 'Average Monthly Temperature and Rainfall in Tokyo'
@@ -426,6 +442,90 @@
 			});
 			
 		});
+		
+	
+		function createDynamicChart() {
+			Highcharts.setOptions({
+				global: {
+					useUTC: false
+				}
+			});
+			
+			var primaryContentWidth = $(".content-primary").width();
+			var chartWidth =  primaryContentWidth - 10;	
+			
+			new Highcharts.Chart({
+				chart: {
+					renderTo: 'container4',
+					defaultSeriesType: 'spline',
+					marginRight: 10,
+					width:chartWidth,
+					events: {
+						load: function() {
+			
+							// set up the updating of the chart each second
+							var series = this.series[0];
+							setInterval(function() {
+								var x = (new Date()).getTime(), // current time
+									y = Math.random();
+								series.addPoint([x, y], true, true);
+							}, 1000);
+						}
+					}
+				},
+				title: {
+					text: 'Live random data'
+				},
+				xAxis: {
+					type: 'datetime',
+					tickPixelInterval: 150
+				},
+				yAxis: {
+					title: {
+						text: 'Value'
+					},
+					plotLines: [{
+						value: 0,
+						width: 1,
+						color: '#808080'
+					}]
+				},
+				tooltip: {
+					formatter: function() {
+			                return '<b>'+ this.series.name +'</b><br/>'+
+							Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', this.x) +'<br/>'+ 
+							Highcharts.numberFormat(this.y, 2);
+					}
+				},
+				legend: {
+					enabled: false
+				},
+				exporting: {
+					enabled: false
+				},
+				series: [{
+					name: 'Random data',
+					data: (function() {
+						// generate an array of random data
+						var data = [],
+							time = (new Date()).getTime(),
+							i;
+						
+						for (i = -19; i <= 0; i++) {
+							data.push({
+								x: time + i * 1000,
+								y: Math.random()
+							});
+						}
+						return data;
+					})()
+				}]
+			});
+		}
+	
+		//	$('#g5').click(createDynamicChart);
+		
+		
 		});
 	</script> 
 	</head>
@@ -436,7 +536,13 @@
 		</div>
 		<div data-role="content"> 
 				<div class="content-primary">
-					<div data-role="collapsible-set" class="ui-collapsible-set">
+					<div  class="ui-collapsible-set">
+					
+						<div id="g5" data-role = "collapsible" data-collapsed="false" data-theme="a">
+							<h3>Weima Group Software Design</h3>
+							<div id = "container4" style="color:#555; text-algin:center; margin:20px;height: 400px; margin: 0 auto"></div> 
+						</div>	
+					
 					<div id="g1" data-role = "collapsible" data-theme="a">
 						<h3>Weima Group Software Design</h3> 
 						<div id = "container" style="color:#555; text-algin:center; margin:20px;height: 400px; margin: 0 auto"></div>
@@ -453,6 +559,7 @@
 						<h3>Weima Group Software Design</h3>
 						<div id = "container3" style="color:#555; text-algin:center; margin:20px;height: 400px; margin: 0 auto"></div> 
 					</div> 
+
 					</div>
 				</div>
 		 
